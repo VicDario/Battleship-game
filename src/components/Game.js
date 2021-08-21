@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DrawMap } from './DrawMap';
+import DrawMap from './DrawMap';
 
 const Game = (props) => {
     const generateMap = (n) => {
