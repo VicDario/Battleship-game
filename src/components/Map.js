@@ -6,9 +6,15 @@ const Map = (props) => {
     useEffect(() => {
         if (props.player.name === 'Computer') {
             setTimeout(function(){
+                let doesComputerHaveToPlay = true;
+                do {
+                    let row = Math.floor(Math.random() * props.enemy.map.length);
+                    let cell = Math.floor(Math.random() * props.enemy.map[row].length);
+                    const fire = fireTorpedoPlayer(false, row, cell);
+                    if (fire)   doesComputerHaveToPlay = false 
+                } while(doesComputerHaveToPlay)
                 props.setTurn(!props.turn)
-            },1);
-            
+            },2000);
         }
         // eslint-disable-next-line
     });
@@ -31,10 +37,10 @@ const Map = (props) => {
     }
 
     const fireTorpedoPlayer = (event, row, cell) => {
-        removePreview(event);
+        if (!!event)    removePreview(event);
         let map = props.enemy.map;
         if (map[row][cell] === 1)   map[row][cell] = 2;
-        else if (map[row][cell] === 2 || map[row][cell] === 3)  return;
+        else if (map[row][cell] === 2 || map[row][cell] === 3)  return false;
         else map[row][cell] = 3;
 
         props.setEnemy(Object.assign(props.enemy, map));
@@ -62,6 +68,7 @@ const Map = (props) => {
                 props.reset();
             })
         }
+        return true;
     };
 
     return (
