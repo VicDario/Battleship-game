@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import DrawMap from './DrawMap';
+import Map from './Map';
 
 const Game = (props) => {
     const generateMap = (n) => {
@@ -26,22 +26,24 @@ const Game = (props) => {
             this.name = name;
             this.boats = boats;
             this.map = map;
+            this.boatsPlaced = 0;
         }
     }
 
     let [turn, setTurn] = useState(true);
+    let [areReady, setAreReady] = useState(false);
     let boats = [new Boat(2), new Boat(3), new Boat(4), new Boat(4), new Boat(5)];
 
-    let [player, setPlayer] = useState(new Player('Player 1', boats, generateMap(10)));
+    let [player, setPlayer] = useState(new Player('Player', boats, generateMap(10)));
     let [computer, setComputer] = useState(new Player('Computer', boats, generateMap(10)));
 
     return (
         <div className="container">
             {
                 turn ?
-                    <DrawMap map={player.map} /> 
+                    <Map player={player} areReady={areReady} turn={turn} setTurn={setTurn} /> 
                 :
-                    <DrawMap map={computer.map} />
+                    <Map player={computer} areReady={areReady} setAreReady={setAreReady} turn={turn} setTurn={setTurn} />
             }
         </div>
     );
