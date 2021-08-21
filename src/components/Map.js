@@ -8,43 +8,100 @@ const Map = (props) => {
             setTimeout(function(){
                 let doesComputerHaveToPlay = true;
                 do {
-                    if ( iaMemory['lastFire'] === 'miss' || iaMemory['lastFire'] === false ) {
+                    if ( props.iaMemory['lastFire'] === 'miss' || props.iaMemory['lastFire'] === false ) {
                         let row = Math.floor(Math.random() * props.enemy.map.length);
                         let cell = Math.floor(Math.random() * props.enemy.map[row].length);
                         const fire = fireTorpedoIA(row, cell);
 
                         props.iaMemory['lastFire'] = fire;
-                        if ( fire == 'hit' ) {
+                        if ( fire === 'hit' ) {
                             props.iaMemory['cordenate'] = [row, cell];
                             props.iaMemory['direction'] = 'up';
                             doesComputerHaveToPlay = false;
-                        } else if ( fire == 'miss' ) {
+                        } else if ( fire === 'miss' ) {
                             props.iaMemory['row'] = false;
                             props.iaMemory['cell'] = false;
                             props.iaMemory['direction'] = false;
                             doesComputerHaveToPlay = false;
                         }
-                    } else if ( iaMemory['lastFire'] === 'hit' || isMemory['lastFire'] === 'checking' ) {
-                        if( iaMemory['lastFire'] === 'hit' ) {
+                    } else if ( props.iaMemory['lastFire'] === 'hit' || props.iaMemory['lastFire'] === 'repeat' ) {
+                        if( props.iaMemory['lastFire'] === 'hit' ) {
                             // Now check directions to fire, to try hit another parts of the boats
-                            if( iaMemory['direction'] === 'up' ) {
-                                if( iaMemory['cordenate'][0] - 1  < 0 ) iaMemory['direction'] === 'right';
+                            if( props.iaMemory['direction'] === 'up' ) {
+                                if( props.iaMemory['cordenate'][0] - 1  < 0 ){
+                                    props.iaMemory['direction'] = 'right';
+                                    continue;
+                                }
+                                let row = props.iaMemory['cordenate'][0] - 1;
+                                let cell = props.iaMemory['cordenate'][1];
+                                const fire = fireTorpedoIA(row, cell);
+                                if (fire === 'hit') {
+                                    props.iaMemory['cordenate'] = [row, cell];
+                                    doesComputerHaveToPlay = false;
+                                }else if ( fire === 'miss' ) {
+                                    props.iaMemory['row'] = false;
+                                    props.iaMemory['cell'] = false;
+                                    props.iaMemory['direction'] = false;
+                                    doesComputerHaveToPlay = false;
+                                }
+
                             }
-                            if( iaMemory['direction'] === 'right' ) {
-                                if( iaMemory['cordenate'][1] + 1  >= props.enemy.map[0].lenght ) iaMemory['direction'] === 'down';
-                            }
-                            if( iaMemory['direction'] === 'down' ) {
-                                if( iaMemory['cordenate'][0] + 1  >= props.enemy.map.lenght ) iaMemory['direction'] === 'left';
-                            }
-                            if( iaMemory['direction'] === 'left' ) {
-                                if( iaMemory['cordenate'][1] - 1  < 0 ) {
-                                    iaMemory['lastFire'] = false
-                                    iaMemory['direction'] = false;
-                                    iaMemory['cordenate'] = []
+                            if( props.iaMemory['direction'] === 'right' ) {
+                                if( props.iaMemory['cordenate'][1] + 1  >= props.enemy.map[0].length ) {
+                                    props.iaMemory['direction'] = 'down';
+                                    continue;
+                                }
+                                let row = props.iaMemory['cordenate'][0];
+                                let cell = props.iaMemory['cordenate'][1] + 1;
+                                const fire = fireTorpedoIA(row, cell);
+                                if (fire === 'hit') {
+                                    props.iaMemory['cordenate'] = [row, cell];
+                                    doesComputerHaveToPlay = false;
+                                }else if ( fire === 'miss' ) {
+                                    props.iaMemory['row'] = false;
+                                    props.iaMemory['cell'] = false;
+                                    props.iaMemory['direction'] = false;
+                                    doesComputerHaveToPlay = false;
                                 }
                             }
-
-
+                            if( props.iaMemory['direction'] === 'down' ) {
+                                if( props.iaMemory['cordenate'][0] + 1  >= props.enemy.map.length ) {
+                                    props.iaMemory['direction'] = 'left';
+                                    continue;
+                                }
+                                let row = props.iaMemory['cordenate'][0] + 1;
+                                let cell = props.iaMemory['cordenate'][1];
+                                const fire = fireTorpedoIA(row, cell);
+                                if (fire === 'hit') {
+                                    props.iaMemory['cordenate'] = [row, cell];
+                                    doesComputerHaveToPlay = false;
+                                }else if ( fire === 'miss' ) {
+                                    props.iaMemory['row'] = false;
+                                    props.iaMemory['cell'] = false;
+                                    props.iaMemory['direction'] = false;
+                                    doesComputerHaveToPlay = false;
+                                }
+                            }
+                            if( props.iaMemory['direction'] === 'left' ) {
+                                if( props.iaMemory['cordenate'][1] - 1  < 0 ) {
+                                    props.iaMemory['lastFire'] = false
+                                    props.iaMemory['direction'] = false;
+                                    props.iaMemory['cordenate'] = []
+                                }
+                                let row = props.iaMemory['cordenate'][0];
+                                let cell = props.iaMemory['cordenate'][1] - 1;
+                                const fire = fireTorpedoIA(row, cell);
+                                if (fire === 'hit') {
+                                    props.iaMemory['cordenate'] = [row, cell];
+                                    doesComputerHaveToPlay = false;
+                                }else if ( fire === 'miss' ) {
+                                    props.iaMemory['lastFire'] = false;
+                                    props.iaMemory['row'] = false;
+                                    props.iaMemory['cell'] = false;
+                                    props.iaMemory['direction'] = false;
+                                    doesComputerHaveToPlay = false;
+                                }
+                            }
                         }
                     }
                 } while (doesComputerHaveToPlay);
@@ -123,6 +180,8 @@ const Map = (props) => {
                 props.reset();
             })
         }
+
+        return result;
     }
 
     return (
