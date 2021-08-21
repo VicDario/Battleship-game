@@ -60,6 +60,13 @@ const Game = (props) => {
     let [player, setPlayer] = useState(new Player('Player', gameBoard1));
     let [computer, setComputer] = useState(new Player('Computer', gameBoard2));
 
+    const reset = () => {
+        setTurn(true);
+        setAreReady(false);
+        setPlayer(new Player('Player', gameBoard1));
+        setComputer(new Player('Computer', gameBoard2));
+    }
+
     return (
         <div className="container">
             {
@@ -71,7 +78,8 @@ const Game = (props) => {
                         setEnemy={setComputer} 
                         areReady={areReady} 
                         turn={turn} 
-                        setTurn={setTurn} 
+                        setTurn={setTurn}
+                        reset={reset}
                     /> 
                 :
                     <Map 
@@ -83,6 +91,7 @@ const Game = (props) => {
                         setAreReady={setAreReady} 
                         turn={turn} 
                         setTurn={setTurn} 
+                        reset={reset}
                     />
             }
         </div>
