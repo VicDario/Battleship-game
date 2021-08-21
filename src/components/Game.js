@@ -7,4 +7,4 @@ const Game = (props) => {
 
 }
 
-default export Game;
+export default Game;
