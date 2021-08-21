@@ -41,9 +41,9 @@ const Game = (props) => {
         <div className="container">
             {
                 turn ?
-                    <Map player={player} areReady={areReady} turn={turn} setTurn={setTurn} /> 
+                    <Map player={player} setPlayer={setPlayer} areReady={areReady} turn={turn} setTurn={setTurn} /> 
                 :
-                    <Map player={computer} areReady={areReady} setAreReady={setAreReady} turn={turn} setTurn={setTurn} />
+                    <Map player={computer} setPlayer={setComputer} areReady={areReady} setAreReady={setAreReady} turn={turn} setTurn={setTurn} />
             }
         </div>
     );
