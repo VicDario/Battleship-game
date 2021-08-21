@@ -2,18 +2,53 @@ import { useEffect } from 'react';
 import Swal from 'sweetalert2';
 
 const Map = (props) => {
-
     useEffect(() => {
+        //IA
         if (props.player.name === 'Computer') {
             setTimeout(function(){
                 let doesComputerHaveToPlay = true;
                 do {
-                    let row = Math.floor(Math.random() * props.enemy.map.length);
-                    let cell = Math.floor(Math.random() * props.enemy.map[row].length);
-                    const fire = fireTorpedoPlayer(false, row, cell);
-                    if (fire)   doesComputerHaveToPlay = false 
-                } while(doesComputerHaveToPlay)
-                props.setTurn(!props.turn)
+                    if ( iaMemory['lastFire'] === 'miss' || iaMemory['lastFire'] === false ) {
+                        let row = Math.floor(Math.random() * props.enemy.map.length);
+                        let cell = Math.floor(Math.random() * props.enemy.map[row].length);
+                        const fire = fireTorpedoIA(row, cell);
+
+                        props.iaMemory['lastFire'] = fire;
+                        if ( fire == 'hit' ) {
+                            props.iaMemory['cordenate'] = [row, cell];
+                            props.iaMemory['direction'] = 'up';
+                            doesComputerHaveToPlay = false;
+                        } else if ( fire == 'miss' ) {
+                            props.iaMemory['row'] = false;
+                            props.iaMemory['cell'] = false;
+                            props.iaMemory['direction'] = false;
+                            doesComputerHaveToPlay = false;
+                        }
+                    } else if ( iaMemory['lastFire'] === 'hit' || isMemory['lastFire'] === 'checking' ) {
+                        if( iaMemory['lastFire'] === 'hit' ) {
+                            // Now check directions to fire, to try hit another parts of the boats
+                            if( iaMemory['direction'] === 'up' ) {
+                                if( iaMemory['cordenate'][0] - 1  < 0 ) iaMemory['direction'] === 'right';
+                            }
+                            if( iaMemory['direction'] === 'right' ) {
+                                if( iaMemory['cordenate'][1] + 1  >= props.enemy.map[0].lenght ) iaMemory['direction'] === 'down';
+                            }
+                            if( iaMemory['direction'] === 'down' ) {
+                                if( iaMemory['cordenate'][0] + 1  >= props.enemy.map.lenght ) iaMemory['direction'] === 'left';
+                            }
+                            if( iaMemory['direction'] === 'left' ) {
+                                if( iaMemory['cordenate'][1] - 1  < 0 ) {
+                                    iaMemory['lastFire'] = false
+                                    iaMemory['direction'] = false;
+                                    iaMemory['cordenate'] = []
+                                }
+                            }
+
+
+                        }
+                    }
+                } while (doesComputerHaveToPlay);
+                props.setTurn(!props.turn);
             },2000);
         }
         // eslint-disable-next-line
@@ -37,39 +72,58 @@ const Map = (props) => {
     }
 
     const fireTorpedoPlayer = (event, row, cell) => {
-        if (!!event)    removePreview(event);
+        removePreview(event);
         let map = props.enemy.map;
         if (map[row][cell] === 1)   map[row][cell] = 2;
-        else if (map[row][cell] === 2 || map[row][cell] === 3)  return false;
+        else if (map[row][cell] === 2 || map[row][cell] === 3)  return;
         else map[row][cell] = 3;
 
         props.setEnemy(Object.assign(props.enemy, map));
         props.setTurn(!props.turn)
 
         let win = checkWin(map);
-        if (win && props.player.name === 'Player') {
+        if (win) {
             Swal.fire({
                 icon: 'success',
                 title: 'You win!',
                 text: 'You have won the game!',
                 showConfirmButton: true,
                 confirmButtonText: 'Start again!',
-            }).then((result) => {
+            }).then(() => {
                 props.reset();
             })
-        } else if (win && props.player.name === 'Computer') {
+        }
+    };
+
+    const fireTorpedoIA = (row, cell) => {
+        let map = props.enemy.map;
+        let result = '';
+        if (map[row][cell] === 1) {
+            map[row][cell] = 2;
+            result = 'hit';
+        }
+        else if (map[row][cell] === 2 || map[row][cell] === 3)  return 'repeat';
+        else {
+            map[row][cell] = 3;
+            result = 'miss';
+        }
+
+        props.setEnemy(Object.assign(props.enemy, map));
+        props.setTurn(!props.turn)
+
+        let win = checkWin(map);
+        if (win) {
             Swal.fire({
                 icon: 'error',
                 title: 'You lose!',
                 text: 'You have lost the game!',
                 showConfirmButton: true,
                 confirmButtonText: 'Revenge',
-            }).then((result) => {
+            }).then(() => {
                 props.reset();
             })
         }
-        return true;
-    };
+    }
 
     return (
         <>
