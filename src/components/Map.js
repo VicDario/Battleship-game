@@ -7,101 +7,108 @@ const Map = (props) => {
         if (props.player.name === 'Computer') {
             setTimeout(function(){
                 let doesComputerHaveToPlay = true;
+                let iaMemory = props.iaMemory;
                 do {
-                    if ( props.iaMemory['lastFire'] === 'miss' || props.iaMemory['lastFire'] === false ) {
+                    if ( iaMemory['lastFire'] === 'miss' || iaMemory['lastFire'] === false ) {
+                        console.log('Mi primer tiro o falle')
                         let row = Math.floor(Math.random() * props.enemy.map.length);
                         let cell = Math.floor(Math.random() * props.enemy.map[row].length);
                         const fire = fireTorpedoIA(row, cell);
 
-                        props.iaMemory['lastFire'] = fire;
+                        iaMemory['lastFire'] = fire;
                         if ( fire === 'hit' ) {
-                            props.iaMemory['coordinates'] = [row, cell];
-                            props.iaMemory['direction'] = 'up';
+                            console.log('Le atine');
+                            iaMemory['coordinates'] = [row, cell];
+                            iaMemory['direction'] = 'up';
                             doesComputerHaveToPlay = false;
+                            props.setIaMemory(iaMemory);
                         } else if ( fire === 'miss' ) {
-                            props.iaMemory['row'] = false;
-                            props.iaMemory['cell'] = false;
-                            props.iaMemory['direction'] = false;
+                            iaMemory['row'] = false;
+                            iaMemory['cell'] = false;
+                            iaMemory['direction'] = false;
                             doesComputerHaveToPlay = false;
+                            props.setIaMemory(iaMemory);
                         }
-                    } else if ( props.iaMemory['lastFire'] === 'hit' || props.iaMemory['lastFire'] === 'repeat' ) {
-                        if( props.iaMemory['lastFire'] === 'hit' ) {
+                    } else if ( iaMemory['lastFire'] === 'hit' || iaMemory['lastFire'] === 'repeat' ) {
+                        if( iaMemory['lastFire'] === 'hit' ) {
+                            console.log('Intentare darle de nuevo')
                             // Now check directions to fire, to try hit another parts of the boats
-                            if( props.iaMemory['direction'] === 'up' ) {
-                                if( props.iaMemory['coordinates'][0] - 1  < 0 ){
-                                    props.iaMemory['direction'] = 'right';
+                            if( iaMemory['direction'] === 'up' ) {
+                                if( iaMemory['coordinates'][0] - 1  < 0 ){
+                                    iaMemory['direction'] = 'right';
                                     continue;
                                 }
-                                let row = props.iaMemory['coordinates'][0] - 1;
-                                let cell = props.iaMemory['coordinates'][1];
+                                let row = iaMemory['coordinates'][0] - 1;
+                                let cell = iaMemory['coordinates'][1];
                                 const fire = fireTorpedoIA(row, cell);
                                 if (fire === 'hit') {
-                                    props.iaMemory['coordinates'] = [row, cell];
+                                    iaMemory['coordinates'] = [row, cell];
                                     doesComputerHaveToPlay = false;
                                 }else if ( fire === 'miss' ) {
-                                    props.iaMemory['row'] = false;
-                                    props.iaMemory['cell'] = false;
-                                    props.iaMemory['direction'] = false;
+                                    iaMemory['row'] = false;
+                                    iaMemory['cell'] = false;
+                                    iaMemory['direction'] = false;
                                     doesComputerHaveToPlay = false;
                                 }
 
                             }
-                            if( props.iaMemory['direction'] === 'right' ) {
-                                if( props.iaMemory['coordinates'][1] + 1  >= props.enemy.map[0].length ) {
-                                    props.iaMemory['direction'] = 'down';
+                            if( iaMemory['direction'] === 'right' ) {
+                                if( iaMemory['coordinates'][1] + 1  >= props.enemy.map[0].length ) {
+                                    iaMemory['direction'] = 'down';
                                     continue;
                                 }
-                                let row = props.iaMemory['coordinates'][0];
-                                let cell = props.iaMemory['coordinates'][1] + 1;
+                                let row = iaMemory['coordinates'][0];
+                                let cell = iaMemory['coordinates'][1] + 1;
                                 const fire = fireTorpedoIA(row, cell);
                                 if (fire === 'hit') {
-                                    props.iaMemory['coordinates'] = [row, cell];
+                                    iaMemory['coordinates'] = [row, cell];
                                     doesComputerHaveToPlay = false;
                                 }else if ( fire === 'miss' ) {
-                                    props.iaMemory['row'] = false;
-                                    props.iaMemory['cell'] = false;
-                                    props.iaMemory['direction'] = false;
+                                    iaMemory['row'] = false;
+                                    iaMemory['cell'] = false;
+                                    iaMemory['direction'] = false;
                                     doesComputerHaveToPlay = false;
                                 }
                             }
-                            if( props.iaMemory['direction'] === 'down' ) {
-                                if( props.iaMemory['coordinates'][0] + 1  >= props.enemy.map.length ) {
-                                    props.iaMemory['direction'] = 'left';
+                            if( iaMemory['direction'] === 'down' ) {
+                                if( iaMemory['coordinates'][0] + 1  >= props.enemy.map.length ) {
+                                    iaMemory['direction'] = 'left';
                                     continue;
                                 }
-                                let row = props.iaMemory['coordinates'][0] + 1;
-                                let cell = props.iaMemory['coordinates'][1];
+                                let row = iaMemory['coordinates'][0] + 1;
+                                let cell = iaMemory['coordinates'][1];
                                 const fire = fireTorpedoIA(row, cell);
                                 if (fire === 'hit') {
-                                    props.iaMemory['coordinates'] = [row, cell];
+                                    iaMemory['coordinates'] = [row, cell];
                                     doesComputerHaveToPlay = false;
                                 }else if ( fire === 'miss' ) {
-                                    props.iaMemory['row'] = false;
-                                    props.iaMemory['cell'] = false;
-                                    props.iaMemory['direction'] = false;
+                                    iaMemory['row'] = false;
+                                    iaMemory['cell'] = false;
+                                    iaMemory['direction'] = false;
                                     doesComputerHaveToPlay = false;
                                 }
                             }
-                            if( props.iaMemory['direction'] === 'left' ) {
-                                if( props.iaMemory['coordinates'][1] - 1  < 0 ) {
-                                    props.iaMemory['lastFire'] = false
-                                    props.iaMemory['direction'] = false;
-                                    props.iaMemory['coordinates'] = []
+                            if( iaMemory['direction'] === 'left' ) {
+                                if( iaMemory['coordinates'][1] - 1  < 0 ) {
+                                    iaMemory['lastFire'] = false
+                                    iaMemory['direction'] = false;
+                                    iaMemory['coordinates'] = []
                                 }
-                                let row = props.iaMemory['coordinates'][0];
-                                let cell = props.iaMemory['coordinates'][1] - 1;
+                                let row = iaMemory['coordinates'][0];
+                                let cell = iaMemory['coordinates'][1] - 1;
                                 const fire = fireTorpedoIA(row, cell);
                                 if (fire === 'hit') {
-                                    props.iaMemory['coordinates'] = [row, cell];
+                                    iaMemory['coordinates'] = [row, cell];
                                     doesComputerHaveToPlay = false;
                                 }else if ( fire === 'miss' ) {
-                                    props.iaMemory['lastFire'] = false;
-                                    props.iaMemory['row'] = false;
-                                    props.iaMemory['cell'] = false;
-                                    props.iaMemory['direction'] = false;
+                                    iaMemory['lastFire'] = false;
+                                    iaMemory['row'] = false;
+                                    iaMemory['cell'] = false;
+                                    iaMemory['direction'] = false;
                                     doesComputerHaveToPlay = false;
                                 }
                             }
+                            props.setIaMemory(iaMemory);
                         }
                     }
                 } while (doesComputerHaveToPlay);
@@ -167,13 +174,12 @@ const Map = (props) => {
         }
     };
 
-    const fireTorpedoIA = (event, row, cell) => {
+    const fireTorpedoIA = (row, cell) => {
         let map = props.enemy.map;
         let result = '';
         if (map[row][cell] === 1) {
             map[row][cell] = 2;
             result = 'hit';
-            event.target.style.backgroundColor = "green";
         }
         else if (map[row][cell] === 2 || map[row][cell] === 3)  return 'repeat';
         else {
