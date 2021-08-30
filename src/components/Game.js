@@ -59,7 +59,7 @@ const Game = (props) => {
 
     let [player, setPlayer] = useState(new Player('Player', gameBoard1));
     let [computer, setComputer] = useState(new Player('Computer', gameBoard2));
-    let iaMemory = {'lastFire': false, 'coordinates': false, 'direction': false};
+    let [iaMemory, setIaMemory]= useState({'lastFire': false, 'coordinates': false, 'direction': false});
 
     const reset = () => {
         setTurn(true);
@@ -94,6 +94,7 @@ const Game = (props) => {
                         setTurn={setTurn} 
                         reset={reset}
                         iaMemory={iaMemory}
+                        setIaMemory={setIaMemory}
                     />
             }
         </div>
